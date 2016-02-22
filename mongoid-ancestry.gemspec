@@ -4,7 +4,7 @@ require "mongoid-ancestry/version"
 
 Gem::Specification.new do |s|
   s.name        = 'mongoid-ancestry'
-  s.version     = Mongoid::Ancestry::VERSION
+  s.version     = '0.5.0'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Stefan Kroes", "Anton Orel"]
   s.email       = ["eagle.anton@gmail.com"]
@@ -23,8 +23,7 @@ Gem::Specification.new do |s|
     "README.md"
   ]
 
-  s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
-  s.add_runtime_dependency "mongoid"
+  s.add_runtime_dependency('mongoid', '>= 3')
+  s.add_development_dependency('rake', ['>= 0.9.2'])
+  s.add_development_dependency('rspec', ['~> 3.0'])
 end
-
