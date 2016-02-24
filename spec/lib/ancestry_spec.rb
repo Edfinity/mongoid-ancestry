@@ -1,67 +1,65 @@
 require 'spec_helper'
-
 require 'mongoid-ancestry/exceptions'
-
 
 describe MongoidAncestry do
 
   subject { MongoidAncestry }
 
-  it "should have ancestry fields" do
+  it "has ancestry fields" do
     subject.with_model do |model|
-      model.fields['ancestry'].options[:type].should eql(String)
+      expect(model.fields['ancestry'].options[:type]).to eq(String)
     end
   end
 
-  it "should have non default ancestry field" do
+  it "has non default ancestry field" do
     subject.with_model :ancestry_field => :alternative_ancestry do |model|
-      model.ancestry_field.should eql(:alternative_ancestry)
+      expect(model.ancestry_field).to eq(:alternative_ancestry)
     end
   end
 
-  it "should set ancestry field" do
+  it "sets ancestry field" do
     subject.with_model do |model|
       model.ancestry_field = :ancestors
-      model.ancestry_field.should eql(:ancestors)
+      expect(model.ancestry_field).to eq(:ancestors)
       model.ancestry_field = :ancestry
-      model.ancestry_field.should eql(:ancestry)
+      expect(model.ancestry_field).to eq(:ancestry)
     end
   end
 
-  it "should have default orphan strategy" do
+  it "has default orphan strategy" do
     subject.with_model do |model|
-      model.orphan_strategy.should eql(:destroy)
+      expect(model.orphan_strategy).to eq(:destroy)
     end
   end
 
-  it "should have default touchable value" do
+  it "has default touchable value" do
     subject.with_model do |model|
-      model.ancestry_touchable.should be_false
+      expect(model.ancestry_touchable).to be false
     end
   end
 
-  it "should set touchable value" do
+  it "sets touchable value" do
     subject.with_model touchable: true do |model|
-      model.ancestry_touchable.should be_true
+      expect(model.ancestry_touchable).to be true
     end
   end
 
-  it "should have non default orphan strategy" do
+  it "has non default orphan strategy" do
     subject.with_model :orphan_strategy => :rootify do |model|
-      model.orphan_strategy.should eql(:rootify)
+      expect(model.orphan_strategy).to eq(:rootify)
     end
   end
 
-  it "should set orphan strategy" do
+  it "sets orphan strategy" do
     subject.with_model do |model|
       model.orphan_strategy = :rootify
-      model.orphan_strategy.should eql(:rootify)
+      expect(model.orphan_strategy).to eq(:rootify)
       model.orphan_strategy = :destroy
-      model.orphan_strategy.should eql(:destroy)
+      expect(model.orphan_strategy).to eq(:destroy)
     end
   end
 
-  it "should not set invalid orphan strategy" do
+  it "does not set invalid orphan strategy" do
     subject.with_model do |model|
       expect {
         model.orphan_strategy = :non_existent_orphan_strategy
@@ -69,29 +67,29 @@ describe MongoidAncestry do
     end
   end
 
-  it "should setup test nodes" do
+  it "setups test nodes" do
     subject.with_model :depth => 3, :width => 3 do |model, roots|
-      roots.class.should eql(Array)
-      roots.length.should eql(3)
+      expect(roots.class).to eq(Array)
+      expect(roots.length).to eq(3)
       roots.each do |node, children|
-        node.class.should eql(model)
-        children.class.should eql(Array)
-        children.length.should eql(3)
+        expect(node.class).to eq(model)
+        expect(children.class).to eq(Array)
+        expect(children.length).to eq(3)
         children.each do |node, children|
-          node.class.should eql(model)
-          children.class.should eql(Array)
-          children.length.should eql(3)
+          expect(node.class).to eq(model)
+          expect(children.class).to eq(Array)
+          expect(children.length).to eq(3)
           children.each do |node, children|
-            node.class.should eql(model)
-            children.class.should eql(Array)
-            children.length.should eql(0)
+            expect(node.class).to eq(model)
+            expect(children.class).to eq(Array)
+            expect(children.length).to eq(0)
           end
         end
       end
     end
   end
 
-  it "should have STI support" do
+  it "has STI support" do
     subject.with_model :extra_columns => {:type => 'String'} do |model|
       subclass1 = Object.const_set 'Subclass1', Class.new(model)
       (class << subclass1; self; end).send(:define_method, :model_name) do
@@ -109,13 +107,13 @@ describe MongoidAncestry do
       node5 = subclass1.create :parent => node4
 
       model.all.each do |node|
-        [subclass1, subclass2].include?(node.class).should be_true
+        expect([subclass1, subclass2].include?(node.class)).to be true
       end
 
-      node1.descendants.map(&:id).should eql([node2.id, node3.id, node4.id, node5.id])
-      node1.subtree.map(&:id).should eql([node1.id, node2.id, node3.id, node4.id, node5.id])
-      node5.ancestors.map(&:id).should eql([node1.id, node2.id, node3.id, node4.id])
-      node5.path.map(&:id).should eql([node1.id, node2.id, node3.id, node4.id, node5.id])
+      expect(node1.descendants.map(&:id)).to eq([node2.id, node3.id, node4.id, node5.id])
+      expect(node1.subtree.map(&:id)).to eq([node1.id, node2.id, node3.id, node4.id, node5.id])
+      expect(node5.ancestors.map(&:id)).to eq([node1.id, node2.id, node3.id, node4.id])
+      expect(node5.path.map(&:id)).to eq([node1.id, node2.id, node3.id, node4.id, node5.id])
     end
   end
 

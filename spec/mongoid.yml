@@ -1,5 +1,5 @@
 test:
-  sessions:
+  clients:
     default:
       database: ancestry_test
       hosts:
